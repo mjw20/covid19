@@ -3,10 +3,10 @@
 # MJW
 
 ui <- navbarPage(
-  "Covid-19",
+  "Novel Coronavirus Pandemic",
   theme = shinytheme("cerulean"),
   
-  tabPanel("Introduction"),
+  #tabPanel("Introduction"),
   tabPanel("Global",
            highchartOutput(outputId = "worldmap")),
   tabPanel("New Zealand"),

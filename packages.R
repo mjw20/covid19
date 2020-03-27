@@ -13,7 +13,8 @@ lib_list <- c("tidyverse",
               "shinyWidgets",
               "readxl",
               "httr",
-              "countrycode")
+              "countrycode",
+              "rsconnect")
 
 
 packages_info <- sapply(lib_list, function(x) {
@@ -22,3 +23,17 @@ packages_info <- sapply(lib_list, function(x) {
   }
   library(x, character.only = TRUE)
 })
+
+# library(tidyverse)
+# library(rgdal)
+# library(rvest)
+# library(xml2)
+# library(highcharter)
+# library(shiny)
+# library(shinydashboard)
+# library(shinythemes)
+# library(shinyWidgets)
+# library(readxl)
+# library(httr)
+# library(countrycode)
+# library(rsconnect)
