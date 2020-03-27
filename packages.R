@@ -12,7 +12,8 @@ lib_list <- c("tidyverse",
               "shinythemes",
               "shinyWidgets",
               "readxl",
-              "httr")
+              "httr",
+              "countrycode")
 
 
 packages_info <- sapply(lib_list, function(x) {

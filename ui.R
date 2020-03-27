@@ -7,7 +7,8 @@ ui <- navbarPage(
   theme = shinytheme("cerulean"),
   
   tabPanel("Introduction"),
-  tabPanel("Global"),
+  tabPanel("Global",
+           highchartOutput(outputId = "worldmap")),
   tabPanel("New Zealand"),
   tabPanel("More")
 )
