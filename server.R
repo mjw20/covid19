@@ -13,7 +13,7 @@ server <- function(input, output){
           dataLabels = list(enabled = TRUE, format = '{point.name}'),
           borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
       hc_tooltip(useHTML = TRUE,
-                 pointFormat = "Total Cases: {point.total_cases} <br/> Total Deaths: {point.total_deaths}") %>% 
+                 pointFormat = "{point.location} <br/> Total Cases: {point.total_cases} <br/> Total Deaths: {point.total_deaths}") %>% 
       hc_colorAxis(minColor = "green", maxColor = "red", max = max(df_world_latest$total_cases), type = "logarithmic") %>% 
       hc_title(text = "Covid-19 Global Pandemic") %>% 
       hc_exporting(enabled = TRUE, filename = "global_pandemic_map")
