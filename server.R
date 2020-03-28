@@ -19,6 +19,17 @@ server <- function(input, output){
       hc_exporting(enabled = TRUE, filename = "global_pandemic_map")
   })
   
+  output$time_series <- renderHighchart({
+    df_world %>% 
+      filter(location %in% c(df_world_latest_top20$location, "New Zealand")) %>% 
+      mutate(date = as.character(date)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total_cases, group = location)) %>% 
+      hc_title(text = "Time Series per Country (Top 20 + New Zealand)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "total cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series20")
+  })
+  
   output$no_countries <- renderHighchart({
     df_transit <- df_world %>% filter(total_cases > 0, location != "World", location != "International") %>%  
       group_by(date) %>% summarise(no_countries = length(unique(location))) %>% 
@@ -76,16 +87,7 @@ server <- function(input, output){
     
   })
   
-  output$time_series <- renderHighchart({
-    df_world %>% 
-      filter(location %in% c(df_world_latest_top20$location, "New Zealand")) %>% 
-      mutate(date = as.character(date)) %>% 
-      hchart(type = "line", hcaes(x = date, y = total_cases, group = location)) %>% 
-      hc_title(text = "Time Series per Country (Top 20 + New Zealand)") %>% 
-      hc_xAxis(title = "") %>% 
-      hc_yAxis(title = list(text = "total cases")) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series20")
-  })
+  
   
   # Page New Zealand
   
