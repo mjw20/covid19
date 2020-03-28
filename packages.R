@@ -14,7 +14,9 @@ lib_list <- c("tidyverse",
               "readxl",
               "httr",
               "countrycode",
-              "rsconnect")
+              "rsconnect",
+              "leaflet",
+              "rgdal")
 
 
 packages_info <- sapply(lib_list, function(x) {
