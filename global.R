@@ -15,10 +15,14 @@ library(readxl)
 library(httr)
 library(countrycode)
 library(rsconnect)
-library(leaflet)
-library(rgdal)
+#library(leaflet)
+#library(rgdal)
+library(jsonlite)
 
 # to deploy the dashboard, one cannot use the pacakges.R to get all the libraries
 # source("packages.R")
-
+source("./function.R")
 source('./data_processing.R')
+source('./ui.R')
+source('./server.R')
+
