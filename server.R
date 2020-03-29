@@ -7,31 +7,17 @@ server <- function(input, output){
   # Page Global
   
   output$worldmap <- renderHighchart({
-    if(sum(global_today$total_cases) > world_info_display$total_cases){
-      hcmap(map = "custom/world", data = global_today, value = "total_cases",
-            joinBy = "iso-a3",
-            name = "Current Situation",
-            dataLabels = list(enabled = TRUE, format = '{point.name}'),
-            borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
-        hc_tooltip(useHTML = TRUE,
-                   pointFormat = "{point.location} <br/> Total Cases: {point.total_cases} <br/> Total Deaths: {point.total_deaths}") %>% 
-        hc_colorAxis(minColor = "green", maxColor = "red", max = max(df_world_latest$total_cases), type = "logarithmic") %>% 
-        hc_title(text = "Covid-19 Global Pandemic") %>% 
-        hc_exporting(enabled = TRUE, filename = "global_pandemic_map") %>% 
-        hc_mapNavigation(enabled = TRUE)
-    }else{
-      hcmap(map = "custom/world", data = df_world_latest, value = "total_cases",
-            joinBy = "iso-a3",
-            name = "Current Situation",
-            dataLabels = list(enabled = TRUE, format = '{point.name}'),
-            borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
-        hc_tooltip(useHTML = TRUE,
-                   pointFormat = "{point.location} <br/> Total Cases: {point.total_cases} <br/> Total Deaths: {point.total_deaths}") %>% 
-        hc_colorAxis(minColor = "green", maxColor = "red", max = max(df_world_latest$total_cases), type = "logarithmic") %>% 
-        hc_title(text = "Covid-19 Global Pandemic") %>% 
-        hc_exporting(enabled = TRUE, filename = "global_pandemic_map") %>% 
-        hc_mapNavigation(enabled = TRUE)
-    }
+    hcmap(map = "custom/world", data = global_latest, value = "total_cases",
+          joinBy = "iso-a3",
+          name = "Current Situation",
+          dataLabels = list(enabled = TRUE, format = '{point.name}'),
+          borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
+      hc_tooltip(useHTML = TRUE,
+                 pointFormat = "{point.location} <br/> Total Cases: {point.total_cases} <br/> Total Deaths: {point.total_deaths}") %>% 
+      hc_colorAxis(minColor = "green", maxColor = "red", max = max(global_latest$total_cases), type = "logarithmic") %>% 
+      hc_title(text = "Covid-19 Global Pandemic") %>% 
+      hc_exporting(enabled = TRUE, filename = "global_pandemic_map") %>% 
+      hc_mapNavigation(enabled = TRUE)
   })
   
   output$time_series <- renderHighchart({

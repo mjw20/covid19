@@ -59,6 +59,17 @@ global_today <- global_comfirmed_today %>% left_join(global_deaths_today, by = "
 global_today$`iso-a3` <- countrycode(global_today$`Country/Region`, origin = 'country.name', destination = 'iso3c')
 global_today$`iso-a2` <- countrycode(global_today$`Country/Region`, origin = 'country.name', destination = 'iso2c')
 
+global_latest <- full_join(na.omit(global_today), na.omit(df_world_latest), by = "iso-a3")
+names(global_latest)[1] <- "country"
+
+global_latest <- global_latest %>% group_by(`iso-a3`) %>% 
+  mutate(
+    total_cases = max(total_cases.x, total_cases.y, na.rm = TRUE),
+    total_deaths = max(total_deaths.x, total_deaths.y, na.rm = TRUE)
+  )
+
+global_latest$location[which(is.na(global_latest$location))] <- global_latest$country[which(is.na(global_latest$location))]
+
 # New Zealand data is from Ministry of Health, public data
 moh_url <- "https://www.health.govt.nz/system/files/documents/pages/covid-19-confirmed-probable-cases-29mar20.xlsx"
 # moh_webpage <- read_html(moh_url)
