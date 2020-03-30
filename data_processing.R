@@ -71,14 +71,29 @@ global_latest <- global_latest %>% group_by(`iso-a3`) %>%
 global_latest$location[which(is.na(global_latest$location))] <- global_latest$country[which(is.na(global_latest$location))]
 
 # New Zealand data is from Ministry of Health, public data
-moh_url <- "https://www.health.govt.nz/system/files/documents/pages/covid-19-confirmed-probable-cases-29mar20.xlsx"
+
+url <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details"
+html <- paste(readLines(url), collapse="\n")
+matched <- str_match_all(html, "<a href=\"(.*?)\"") %>% as.data.frame()
+nzdf_path <- as.character(matched$X2[grep("/system/files/documents/pages/", matched$X2)])
+moh_url <- paste0("https://www.health.govt.nz", nzdf_path)
 # moh_webpage <- read_html(moh_url)
 # df_nzmoh <- html_table(moh_webpage)[[1]]
 GET(moh_url, write_disk(tf <- tempfile(fileext = ".xlsx")))
-df_nzmoh <- read_excel(tf, sheet="Confirmed")
+df_nzmoh <- read_excel(tf, sheet = 1, skip = 3)
 df_nzmoh$DHB <- str_replace_all(df_nzmoh$DHB, "&", "and")
 
-df_nzmoh_probable <- read_excel(tf, sheet="Probable")
+df_nzmoh_probable <- read_excel(tf, sheet= 2, skip = 3)
+
+df_nzmoh$type = "confirmed"
+df_nzmoh_probable$type = "probable"
+
+names(df_nzmoh_probable) <- names(df_nzmoh)
+
+df_nzmoh_all = rbind(df_nzmoh, df_nzmoh_probable)
+
+df_nzgender <- df_nzmoh_all %>% group_by(Sex) %>% summarise(count = n())
+df_nzgender$Sex[which(is.na(df_nzgender$Sex))] <- "NA"
 
 # world map data from highcharter
 world_mapdata <- get_data_from_map(download_map_data("custom/world"))

@@ -118,6 +118,17 @@ server <- function(input, output){
     
   })
   
+  output$nz_ts <- renderHighchart({
+    df_nzmoh_all %>% group_by(`Report Date`, type) %>% 
+      summarise(count = n()) %>% 
+      mutate(date = as.Date(`Report Date`)) %>% 
+      hchart(type = "line", hcaes(x = date, y = count, group = type)) %>% 
+      hc_title(text = "Time Series (New Zealand DHB)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series_nz")
+  })
+  
   # output$nzmap <- renderLeaflet({
   #   leaflet(nz_dhb) %>%
   #     addProviderTiles("Esri.WorldStreetMap") %>% 
@@ -127,6 +138,27 @@ server <- function(input, output){
   #     setView(lat = -41.2865, lng = 174.7762, zoom = 5) %>% 
   #     addLegend(pal = pal, values = ~confirmed_cases, opacity = 0.7, title = NULL, position = "bottomright")
   # })
+  
+  output$nzdhb_column <- renderHighchart({
+    df_nzmoh_all %>% group_by(DHB, type) %>% summarise(count = n()) %>% arrange(desc(count)) %>% 
+      hchart(type = "column", hcaes(x = DHB, y = count, group = type)) %>% 
+      hc_title(text = "Ranking Cases by DHB") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "column_dhb_nz")
+  })
+  
+  output$nzgender_pie <- renderHighchart({
+    highchart() %>% 
+      hc_chart(type = "pie") %>% 
+      hc_add_series_labels_values(labels = df_nzgender$Sex, 
+                                  values = df_nzgender$count, 
+                                  name = "no. of total cases",
+                                  dataLabels = list(enabled = TRUE,
+                                                    format = '{point.name}: {point.percentage:.1f} %')) %>% 
+      hc_title(text = "Gender (Total Cases)") %>% 
+      hc_exporting(enabled = TRUE, filename = "gender_pie_nz")
+  })
 }
 
 
