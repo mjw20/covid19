@@ -36,6 +36,21 @@ ui <- navbarPage(
            column(6, highchartOutput(outputId = "nz_age_column")),
            column(6, highchartOutput(outputId = "nz_oversea")),
            column(6),
-           column(12, highchartOutput(outputId = "nz_travel_routes", height = "500px")))#,
-  #tabPanel("More")
+           column(12, highchartOutput(outputId = "nz_travel_routes", height = "500px"))),
+  tabPanel("Declaration",
+           h3("Statement"),
+           HTML("This R Shiny App is designed for tracking the changes of Covid-19 Global Pandemic, it is solely for my own resarch interest, and not for profit or business. <br/>
+                Since I live in New Zealand, so beisdes the global situation, the dashboard is more concentrate on New Zealand. <br>
+                The major package used in this App is highcharter, and thanks to their generous policy to make it free for personal users!!!"),
+           h3("Data Sources"),
+           HTML("This App uses data from 3 different sources: <br/>"),
+           tags$ul(
+             tags$li("European Centre for Disease Prevention and Control", tags$a(href = "https://covid.ourworldindata.org/data/ecdc/full_data.csv", "Click here!")), 
+             tags$li("Johns Hopkins data", tags$a(href = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series", "Click here!")), 
+             tags$li("Ministry of Health New Zealand", tags$a(href = "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases", "Click here!"))
+           ),
+           HTML("As the 3 sources are not updating their data at the same time, so sometimes there will be synchronisation issues. <br/>
+                I have tried my best to provide the most accurate and updated figures in this App from open sources data <br/>"),
+           h3("Contact Details"),
+           HTML("Advices, comments, and corrections or simply say hi are more than welcome, <br/> feel free to contact me via email at mjw20@outlook.com"))
 )
