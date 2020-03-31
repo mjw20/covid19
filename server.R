@@ -166,6 +166,7 @@ server <- function(input, output){
                                   name = "no. of total cases",
                                   dataLabels = list(enabled = TRUE,
                                                     format = '{point.name}: {point.percentage:.1f} %')) %>% 
+      hc_plotOptions(pie = list(size = 250)) %>% 
       hc_title(text = "Gender (Total Cases)") %>% 
       hc_exporting(enabled = TRUE, filename = "gender_pie_nz")
   })
@@ -177,13 +178,16 @@ server <- function(input, output){
                                   values = nz_ethnicity$`No. of cases`, 
                                   name = "no. of cases",
                                   dataLabels = list(enabled = TRUE,
-                                                    format = '{point.name}: {point.percentage:.1f} %')) %>% 
+                                                    format = '{point.name}: {point.percentage:.1f} %')) %>%
+      hc_plotOptions(pie = list(size = 250)) %>% 
       hc_title(text = "Ethnicity (Total Cases)") %>% 
       hc_exporting(enabled = TRUE, filename = "ethnicity_pie_nz")
   })
   
   output$nz_age_column <- renderHighchart({
-    df_nzmoh_all %>% group_by(`Age group`) %>% summarise(count = n()) %>% 
+    df_nzmoh_all %>% group_by(`Age group`) %>% summarise(count = n()) %>%
+      mutate(`Age group` = factor(`Age group`, levels = c("<1", "1 to 4", "5 to 9", "10 to 14", "15 to 19", "20 to 29", "30 to 39", "40 to 49", "50 to 59", "60 to 69", "70+", "Unknown"))) %>% 
+      arrange(`Age group`, .by_group = TRUE) %>% 
       hchart(type = "column", hcaes(x = `Age group`, y = count), color = "orange", dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "Age Group (Total Cases)") %>% 
       hc_xAxis(title = "") %>% 

@@ -93,6 +93,10 @@ names(df_nzmoh_probable) <- names(df_nzmoh)
 
 df_nzmoh_all = rbind(df_nzmoh, df_nzmoh_probable)
 
+# somehow there is one observation that is "60 to 69" and after group_by it gives two 60 to 69!!!
+
+df_nzmoh_all$`Age group`[grep("6", df_nzmoh_all$`Age group`)] <- "60 to 69"
+
 df_nzgender <- df_nzmoh_all %>% group_by(Sex) %>% summarise(count = n())
 df_nzgender$Sex[which(df_nzgender$Sex == "")] <- "NA"
 
