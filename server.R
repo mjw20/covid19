@@ -50,7 +50,8 @@ server <- function(input, output){
       if(min(df_transit$Diff, na.rm = TRUE) == 0){break}
     }
     df_transit$date <- as.character(df_transit$date)
-    df_transit %>% hchart(type = "column", hcaes(x = date, y = no_countries), name = "number of countries") %>% 
+    df_transit %>% hchart(type = "column", hcaes(x = date, y = no_countries), name = "number of countries",
+                          dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "No. of Countries Hitted by Covid-19") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of countries")) %>% 
@@ -62,7 +63,8 @@ server <- function(input, output){
     df_world_latest %>% filter(location != "World", location != "International") %>%
       arrange(desc(total_cases)) %>%
       slice(1:20) %>% 
-      hchart(type = "bar", hcaes(x = location, y = total_cases), name = "total cases", color = "red") %>% 
+      hchart(type = "bar", hcaes(x = location, y = total_cases), name = "total cases", color = "red",
+             dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "Total Cases per Country (Top 20)") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
       hc_xAxis(title = "") %>% 
@@ -74,7 +76,8 @@ server <- function(input, output){
     df_world_latest %>% filter(location != "World", location != "International") %>%
       arrange(desc(total_deaths)) %>%
       slice(1:20) %>% 
-      hchart(type = "bar", hcaes(x = location, y = total_deaths), name = "total deaths", color = "grey") %>% 
+      hchart(type = "bar", hcaes(x = location, y = total_deaths), name = "total deaths", color = "grey",
+             dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "Death Cases per Country (Top 20)") %>% 
       hc_yAxis(title = list(text = "no. of deaths")) %>% 
       hc_xAxis(title = "") %>% 
@@ -88,6 +91,7 @@ server <- function(input, output){
       slice(1:20) %>% 
       mutate(death_rate = round(death_rate*100, digits = 3)) %>% 
       hchart(type = "column", hcaes(x = location, y = death_rate), name = "Death Rate", color = "black",
+             dataLabels = list(enabled = TRUE, format = "{point.death_rate}%"),
              tooltip = list(pointFormat = "death rate: {point.death_rate}%")) %>% 
       hc_title(text = "Death Rate per Country (Top 20)") %>% 
       hc_xAxis(title = "") %>% 
@@ -118,12 +122,18 @@ server <- function(input, output){
     
   })
   
+  output$nz_current <- DT::renderDataTable({
+    nz_current$`New in last 24 hours` <- as.numeric(nz_current$`New in last 24 hours`)
+    datatable(nz_current, rownames = FALSE, width = 700)
+  })
+  
   output$nz_ts <- renderHighchart({
-    df_nzmoh_all %>% group_by(`Report Date`, type) %>% 
+    df_nzmoh_all %>% group_by(`Date of report`, type) %>% 
       summarise(count = n()) %>% 
-      mutate(date = as.Date(`Report Date`)) %>% 
-      hchart(type = "line", hcaes(x = date, y = count, group = type)) %>% 
-      hc_title(text = "Time Series (New Zealand DHB)") %>% 
+      mutate(date = as.Date(`Date of report`, "%d/%m/%Y")) %>%
+      arrange(desc(date), type) %>%
+      hchart(type = "line", hcaes(x = date, y = count, group = type), dataLabels = list(enabled = TRUE)) %>% 
+      hc_title(text = "Time Series (New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
       hc_exporting(enabled = TRUE, filename = "time_series_nz")
@@ -141,7 +151,7 @@ server <- function(input, output){
   
   output$nzdhb_column <- renderHighchart({
     df_nzmoh_all %>% group_by(DHB, type) %>% summarise(count = n()) %>% arrange(desc(count)) %>% 
-      hchart(type = "column", hcaes(x = DHB, y = count, group = type)) %>% 
+      hchart(type = "column", hcaes(x = DHB, y = count, group = type), dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "Ranking Cases by DHB") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
@@ -158,6 +168,52 @@ server <- function(input, output){
                                                     format = '{point.name}: {point.percentage:.1f} %')) %>% 
       hc_title(text = "Gender (Total Cases)") %>% 
       hc_exporting(enabled = TRUE, filename = "gender_pie_nz")
+  })
+  
+  output$nz_ethnicty_pie <- renderHighchart({
+    highchart() %>% 
+      hc_chart(type = "pie") %>% 
+      hc_add_series_labels_values(labels = nz_ethnicity$Ethnicity, 
+                                  values = nz_ethnicity$`No. of cases`, 
+                                  name = "no. of cases",
+                                  dataLabels = list(enabled = TRUE,
+                                                    format = '{point.name}: {point.percentage:.1f} %')) %>% 
+      hc_title(text = "Ethnicity (Total Cases)") %>% 
+      hc_exporting(enabled = TRUE, filename = "ethnicity_pie_nz")
+  })
+  
+  output$nz_age_column <- renderHighchart({
+    df_nzmoh_all %>% group_by(`Age group`) %>% summarise(count = n()) %>% 
+      hchart(type = "column", hcaes(x = `Age group`, y = count), color = "orange", dataLabels = list(enabled = TRUE)) %>% 
+      hc_title(text = "Age Group (Total Cases)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "column_age_nz")
+  })
+  
+  output$nz_oversea <- renderHighchart({
+    df_plot <- df_nzmoh_all %>% group_by(`International travel`) %>% summarise(count = n()) %>% arrange(desc(count))
+    df_plot$`International travel`[which(df_plot$`International travel` == "")] <- "NA"
+    df_plot %>% 
+      hchart(type = "bar", hcaes(x = `International travel`, y = count), name = "no. of cases", color = "skyblue", 
+             dataLabels = list(enabled = TRUE)) %>% 
+      hc_title(text = "International Travel (Total Cases)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "overseas_nz")
+  })
+  
+  output$nz_travel_routes <- renderHighchart({
+    hcmap(map = "custom/world", showInLegend = FALSE, data = global_latest, value = "total_cases",
+          joinBy = "iso-a3", name = "local situation",
+          borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
+      hc_add_series(data = df_flight, type = "mapbubble", name = "Cases travel to NZ from", maxSize = '10%', color = "red",
+                    dataLabels = list(enabled = TRUE, format = '{point.name}', color = "black")) %>% 
+      #hc_add_series(data = air_lines, type = "mapline", name = "flight route") %>% 
+      hc_title(text = "Oversea cases to New Zealand") %>% 
+      hc_exporting(enabled = TRUE, filename = "travel_map") %>% 
+      hc_mapNavigation(enabled = TRUE)
+    
   })
 }
 

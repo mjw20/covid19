@@ -16,7 +16,8 @@ lib_list <- c("tidyverse",
               "countrycode",
               "rsconnect",
               "leaflet",
-              "rgdal")
+              "rgdal",
+              "DT")
 
 
 packages_info <- sapply(lib_list, function(x) {

@@ -3,8 +3,8 @@
 # MJW
 
 ui <- navbarPage(
-  "Novel Coronavirus Global Pandemic",
-  theme = shinytheme("cerulean"),
+  "Covid-19 Global Pandemic",
+  theme = shinytheme("cosmo"),
   
   #tabPanel("Introduction"),
   tabPanel("Global",
@@ -26,8 +26,16 @@ ui <- navbarPage(
            infoBox(title = "Confirmed Cases", value = (df_nzmoh_all %>% group_by(type) %>% summarise(n = n()))$n[1], width = 3, color = "navy", icon = shiny::icon("frown")),
            infoBox(title = "Probable Cases", value = (df_nzmoh_all %>% group_by(type) %>% summarise(n = n()))$n[2], width = 3, color = "navy", icon = shiny::icon("question")),
            infoBox(title = "Total Deaths", value = as.numeric(df_world_latest[which(df_world_latest$location == "New Zealand"), "total_deaths"]), width = 3, color = "navy", icon = shiny::icon("cross")),
+           #column(4),
+           column(12, align = "center", DT::dataTableOutput(outputId = "nz_current", width = "50%")),
+           #column(4),
            column(12, highchartOutput(outputId = "nz_ts")),
            column(6, highchartOutput(outputId = "nzdhb_column")),
-           column(6, highchartOutput(outputId = "nzgender_pie")))#,
+           column(6, highchartOutput(outputId = "nzgender_pie")),
+           column(6, highchartOutput(outputId = "nz_ethnicty_pie")),
+           column(6, highchartOutput(outputId = "nz_age_column")),
+           column(6, highchartOutput(outputId = "nz_oversea")),
+           column(6),
+           column(12, highchartOutput(outputId = "nz_travel_routes", height = "500px")))#,
   #tabPanel("More")
 )

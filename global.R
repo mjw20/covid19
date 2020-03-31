@@ -16,8 +16,9 @@ library(httr)
 library(countrycode)
 library(rsconnect)
 #library(leaflet)
-#library(rgdal)
+library(rgdal)
 library(jsonlite)
+library(DT)
 
 # to deploy the dashboard, one cannot use the pacakges.R to get all the libraries
 # source("packages.R")
