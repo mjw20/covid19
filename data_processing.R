@@ -94,8 +94,17 @@ names(df_nzmoh_probable) <- names(df_nzmoh)
 df_nzmoh_all = rbind(df_nzmoh, df_nzmoh_probable)
 
 # somehow there is one observation that is "60 to 69" and after group_by it gives two 60 to 69!!!
-
-df_nzmoh_all$`Age group`[grep("6", df_nzmoh_all$`Age group`)] <- "60 to 69"
+df_nzmoh_all$`Age group`[grep("<", df_nzmoh_all$`Age group`)] <- "< 1"
+df_nzmoh_all$`Age group`[grep("1 to", df_nzmoh_all$`Age group`)] <- "1 to 4"
+df_nzmoh_all$`Age group`[grep("5 to", df_nzmoh_all$`Age group`)] <- "5 to 9"
+df_nzmoh_all$`Age group`[grep("10", df_nzmoh_all$`Age group`)] <- "10 to 14"
+df_nzmoh_all$`Age group`[grep("15", df_nzmoh_all$`Age group`)] <- "15 to 19"
+df_nzmoh_all$`Age group`[grep("20", df_nzmoh_all$`Age group`)] <- "20 to 29"
+df_nzmoh_all$`Age group`[grep("30", df_nzmoh_all$`Age group`)] <- "30 to 39"
+df_nzmoh_all$`Age group`[grep("40", df_nzmoh_all$`Age group`)] <- "40 to 49"
+df_nzmoh_all$`Age group`[grep("50", df_nzmoh_all$`Age group`)] <- "50 to 59"
+df_nzmoh_all$`Age group`[grep("60", df_nzmoh_all$`Age group`)] <- "60 to 69"
+df_nzmoh_all$`Age group`[grep("70", df_nzmoh_all$`Age group`)] <- "70+"
 
 df_nzgender <- df_nzmoh_all %>% group_by(Sex) %>% summarise(count = n())
 df_nzgender$Sex[which(df_nzgender$Sex == "")] <- "NA"

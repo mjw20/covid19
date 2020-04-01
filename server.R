@@ -20,14 +20,52 @@ server <- function(input, output){
       hc_mapNavigation(enabled = TRUE)
   })
   
+  output$time_series_total <- renderHighchart({
+    df_world %>% filter(location != "World", location != "International") %>% 
+      group_by(date) %>% summarise(total_cases = sum(total_cases)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total_cases), name = "no. of cases") %>%
+      hc_title(text = "Total Cases (World) OVer Time") %>% 
+      hc_xAxis(title = list(text = "Date")) %>% 
+      hc_yAxis(title = list(text = "total cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series_total")
+  })
+  
+  output$time_series__total_log <- renderHighchart({
+    df_world %>% filter(location != "World", location != "International") %>% 
+      group_by(date) %>% summarise(total_cases = sum(total_cases)) %>% 
+      mutate(total_cases_log = log(total_cases)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total_cases_log), name = "no. of cases",
+             tooltip = list(pointFormat = "no. of cases: {point.total_cases}")) %>%
+      hc_title(text = "Total Cases (World & Logarithm) OVer Time") %>% 
+      hc_xAxis(title = list(text = "Date")) %>% 
+      hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
+        return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
+    }"))) %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series_total")
+  })
+  
   output$time_series <- renderHighchart({
     df_world %>% 
       filter(location %in% c(df_world_latest_top20$location, "New Zealand")) %>% 
-      hchart(type = "line", hcaes(x = date, y = total_cases, group = location)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total_cases, group = location)) %>%
       hc_title(text = "Time Series per Country (Top 20 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
       hc_exporting(enabled = TRUE, filename = "time_series20")
+  })
+  
+  output$time_series_log <- renderHighchart({
+    df_world %>% 
+      filter(location %in% c(df_world_latest_top20$location, "New Zealand")) %>% 
+      mutate(total_cases_log = log(total_cases)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total_cases_log, group = location),
+             tooltip = list(pointFormat = "{point.location}: {point.total_cases}")) %>%
+      hc_title(text = "Time Series (Logarithm) per Country (Top 20 + New Zealand)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
+        return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
+    }"))) %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series20_log")
   })
   
   output$trend_comparing <- renderHighchart({
@@ -36,6 +74,19 @@ server <- function(input, output){
       hc_title(text = "Trend Comparing Over Time (Top 20 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "trend_series20")
+  })
+  
+  output$trend_comparing_log <- renderHighchart({
+    world_trend %>%  
+      mutate(total_cases_log = log(total_cases)) %>% 
+      hchart(type = "line", hcaes(x = stamp, y = total_cases_log, group = location),
+             tooltip = list(pointFormat = "{point.location}: {point.total_cases}")) %>% 
+      hc_title(text = "Trend (Logarithm) Comparing Over Time (Top 20 + New Zealand)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
+        return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
+    }"))) %>% 
       hc_exporting(enabled = TRUE, filename = "trend_series20")
   })
   
@@ -127,10 +178,40 @@ server <- function(input, output){
     datatable(nz_current, rownames = FALSE, width = 700)
   })
   
+  output$nz_total <- renderHighchart({
+    df_nzmoh_all %>% group_by(`Date of report`) %>% 
+      summarise(count = n()) %>% 
+      mutate(date = as.Date(`Date of report`, "%d/%m/%Y")) %>% 
+      arrange(date) %>%
+      mutate(total = cumsum(count)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total), dataLabels = list(enabled = TRUE)) %>% 
+      hc_title(text = "Time Series Total Cases (New Zealand)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series_nz")
+  })
+  
+  output$nz_total_log <- renderHighchart({
+    df_nzmoh_all %>% group_by(`Date of report`) %>% 
+      summarise(count = n()) %>% 
+      mutate(date = as.Date(`Date of report`, "%d/%m/%Y")) %>% 
+      arrange(date) %>%
+      mutate(total = cumsum(count)) %>% 
+      mutate(total_log = log(total)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total_log), dataLabels = list(enabled = TRUE, format = "{point.total}"),
+             tooltip = list(pointFormat = "no. of cases: {point.total}")) %>% 
+      hc_title(text = "Time Series (Logarithm) Total Cases (New Zealand)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
+        return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
+    }"))) %>% 
+      hc_exporting(enabled = TRUE, filename = "trend_series20")
+  })
+  
   output$nz_ts <- renderHighchart({
     df_nzmoh_all %>% group_by(`Date of report`, type) %>% 
       summarise(count = n()) %>% 
-      mutate(date = as.Date(`Date of report`, "%d/%m/%Y")) %>%
+      mutate(date = as.Date(`Date of report`, "%d/%m/%Y")) %>% 
       arrange(desc(date), type) %>%
       hchart(type = "line", hcaes(x = date, y = count, group = type), dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "Time Series (New Zealand)") %>% 
@@ -186,7 +267,7 @@ server <- function(input, output){
   
   output$nz_age_column <- renderHighchart({
     df_nzmoh_all %>% group_by(`Age group`) %>% summarise(count = n()) %>%
-      mutate(`Age group` = factor(`Age group`, levels = c("<1", "1 to 4", "5 to 9", "10 to 14", "15 to 19", "20 to 29", "30 to 39", "40 to 49", "50 to 59", "60 to 69", "70+", "Unknown"))) %>% 
+      mutate(`Age group` = factor(`Age group`, levels = c("< 1", "1 to 4", "5 to 9", "10 to 14", "15 to 19", "20 to 29", "30 to 39", "40 to 49", "50 to 59", "60 to 69", "70+", "Unknown"))) %>% 
       arrange(`Age group`, .by_group = TRUE) %>% 
       hchart(type = "column", hcaes(x = `Age group`, y = count), color = "orange", dataLabels = list(enabled = TRUE)) %>% 
       hc_title(text = "Age Group (Total Cases)") %>% 
@@ -218,6 +299,21 @@ server <- function(input, output){
       hc_exporting(enabled = TRUE, filename = "travel_map") %>% 
       hc_mapNavigation(enabled = TRUE)
     
+  })
+  
+  
+  # Data Page
+  
+  output$world_data_ecdc <- DT::renderDataTable({
+    datatable(df_world)
+  }) 
+  
+  output$world_data_john <- DT::renderDataTable({
+    datatable(global_today)
+  })
+  
+  output$nz_data <- DT::renderDataTable({
+    datatable(df_nzmoh_all, options = list(pageLength = 25))
   })
 }
 
