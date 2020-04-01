@@ -27,7 +27,8 @@ server <- function(input, output){
       hc_title(text = "Total Cases (World) OVer Time") %>% 
       hc_xAxis(title = list(text = "Date")) %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series_total")
+      hc_exporting(enabled = TRUE, filename = "time_series_total") %>% 
+      hc_legend(layout = "proximate", align = "right")
   })
   
   output$time_series__total_log <- renderHighchart({
@@ -41,7 +42,8 @@ server <- function(input, output){
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
         return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
     }"))) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series_total")
+      hc_exporting(enabled = TRUE, filename = "time_series_total") %>% 
+      hc_legend(layout = "proximate", align = "right")
   })
   
   output$time_series <- renderHighchart({
@@ -51,7 +53,8 @@ server <- function(input, output){
       hc_title(text = "Time Series per Country (Top 20 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series20")
+      hc_exporting(enabled = TRUE, filename = "time_series20") %>% 
+      hc_legend(layout = "proximate", align = "right")
   })
   
   output$time_series_log <- renderHighchart({
@@ -65,7 +68,8 @@ server <- function(input, output){
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
         return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
     }"))) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series20_log")
+      hc_exporting(enabled = TRUE, filename = "time_series20_log") %>% 
+      hc_legend(layout = "proximate", align = "right")
   })
   
   output$trend_comparing <- renderHighchart({
@@ -74,7 +78,8 @@ server <- function(input, output){
       hc_title(text = "Trend Comparing Over Time (Top 20 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
-      hc_exporting(enabled = TRUE, filename = "trend_series20")
+      hc_exporting(enabled = TRUE, filename = "trend_series20") %>% 
+      hc_legend(layout = "proximate", align = "right")
   })
   
   output$trend_comparing_log <- renderHighchart({
@@ -87,7 +92,8 @@ server <- function(input, output){
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
         return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
     }"))) %>% 
-      hc_exporting(enabled = TRUE, filename = "trend_series20")
+      hc_exporting(enabled = TRUE, filename = "trend_series20") %>% 
+      hc_legend(layout = "proximate", align = "right")
   })
   
   output$no_countries <- renderHighchart({
