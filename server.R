@@ -286,7 +286,10 @@ server <- function(input, output){
     df_plot %>% ungroup() %>% 
       mutate(Sex = factor(Sex, levels = c("Female", "Male", "Unknown"))) %>% 
       arrange(Sex, .by_group = TRUE) %>% 
-      hchart(type = "column", hcaes(x = `Age group`, y = count, group = Sex), dataLabels = list(enabled = TRUE)) %>% 
+      hchart(type = "column", hcaes(x = `Age group`, y = count, group = Sex), 
+             dataLabels = list(enabled = TRUE)) %>% 
+      hc_chart(type = "column",
+               options3d = list(enabled = TRUE, beta = 15, alpha = 15)) %>% 
       hc_title(text = "Age Group by Gender (Total Cases)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
