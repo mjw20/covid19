@@ -48,37 +48,37 @@ server <- function(input, output){
   
   output$time_series <- renderHighchart({
     df_world %>% 
-      filter(location %in% c(df_world_latest_top20$location, "New Zealand")) %>% 
+      filter(location %in% c(df_world_latest_top10$location, "New Zealand")) %>% 
       hchart(type = "line", hcaes(x = date, y = total_cases, group = location)) %>%
-      hc_title(text = "Time Series per Country (Top 20 + New Zealand)") %>% 
+      hc_title(text = "Time Series per Country (Top 10 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series20") %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series10") %>% 
       hc_legend(layout = "proximate", align = "right")
   })
   
   output$time_series_log <- renderHighchart({
     df_world %>% 
-      filter(location %in% c(df_world_latest_top20$location, "New Zealand")) %>% 
+      filter(location %in% c(df_world_latest_top10$location, "New Zealand")) %>% 
       mutate(total_cases_log = log(total_cases)) %>% 
       hchart(type = "line", hcaes(x = date, y = total_cases_log, group = location),
              tooltip = list(pointFormat = "{point.location}: {point.total_cases}")) %>%
-      hc_title(text = "Time Series (Logarithm) per Country (Top 20 + New Zealand)") %>% 
+      hc_title(text = "Time Series (Logarithm) per Country (Top 10 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
         return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
     }"))) %>% 
-      hc_exporting(enabled = TRUE, filename = "time_series20_log") %>% 
+      hc_exporting(enabled = TRUE, filename = "time_series10_log") %>% 
       hc_legend(layout = "proximate", align = "right")
   })
   
   output$trend_comparing <- renderHighchart({
     world_trend %>%  
       hchart(type = "line", hcaes(x = stamp, y = total_cases, group = location)) %>% 
-      hc_title(text = "Trend Comparing Over Time (Top 20 + New Zealand)") %>% 
+      hc_title(text = "Trend Comparing Over Time (Top 10 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases")) %>% 
-      hc_exporting(enabled = TRUE, filename = "trend_series20") %>% 
+      hc_exporting(enabled = TRUE, filename = "trend_series10") %>% 
       hc_legend(layout = "proximate", align = "right")
   })
   
@@ -87,12 +87,12 @@ server <- function(input, output){
       mutate(total_cases_log = log(total_cases)) %>% 
       hchart(type = "line", hcaes(x = stamp, y = total_cases_log, group = location),
              tooltip = list(pointFormat = "{point.location}: {point.total_cases}")) %>% 
-      hc_title(text = "Trend (Logarithm) Comparing Over Time (Top 20 + New Zealand)") %>% 
+      hc_title(text = "Trend (Logarithm) Comparing Over Time (Top 10 + New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
         return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
     }"))) %>% 
-      hc_exporting(enabled = TRUE, filename = "trend_series20") %>% 
+      hc_exporting(enabled = TRUE, filename = "trend_series10") %>% 
       hc_legend(layout = "proximate", align = "right")
   })
   
@@ -119,41 +119,41 @@ server <- function(input, output){
     
     df_world_latest %>% filter(location != "World", location != "International") %>%
       arrange(desc(total_cases)) %>%
-      slice(1:20) %>% 
+      slice(1:10) %>% 
       hchart(type = "bar", hcaes(x = location, y = total_cases), name = "total cases", color = "red",
              dataLabels = list(enabled = TRUE)) %>% 
-      hc_title(text = "Total Cases per Country (Top 20)") %>% 
+      hc_title(text = "Total Cases per Country (Top 10)") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
       hc_xAxis(title = "") %>% 
-      hc_exporting(enabled = TRUE, filename = "total_cases20")
+      hc_exporting(enabled = TRUE, filename = "total_cases10")
   })
   
   output$total_deaths_ranking <- renderHighchart({
     
     df_world_latest %>% filter(location != "World", location != "International") %>%
       arrange(desc(total_deaths)) %>%
-      slice(1:20) %>% 
+      slice(1:10) %>% 
       hchart(type = "bar", hcaes(x = location, y = total_deaths), name = "total deaths", color = "grey",
              dataLabels = list(enabled = TRUE)) %>% 
-      hc_title(text = "Death Cases per Country (Top 20)") %>% 
+      hc_title(text = "Death Cases per Country (Top 10)") %>% 
       hc_yAxis(title = list(text = "no. of deaths")) %>% 
       hc_xAxis(title = "") %>% 
-      hc_exporting(enabled = TRUE, filename = "total_deaths20")
+      hc_exporting(enabled = TRUE, filename = "total_deaths10")
   })
   
   output$death_rate <- renderHighchart({
     
     df_world_latest %>% filter(location != "World", location != "International") %>% 
       mutate(death_rate = total_deaths/total_cases) %>% arrange(desc(total_cases), desc(death_rate)) %>% 
-      slice(1:20) %>% 
+      slice(1:10) %>% 
       mutate(death_rate = round(death_rate*100, digits = 3)) %>% 
       hchart(type = "column", hcaes(x = location, y = death_rate), name = "Death Rate", color = "black",
              dataLabels = list(enabled = TRUE, format = "{point.death_rate}%"),
              tooltip = list(pointFormat = "death rate: {point.death_rate}%")) %>% 
-      hc_title(text = "Death Rate per Country (Top 20)") %>% 
+      hc_title(text = "Death Rate per Country (Top 10)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "death rate %")) %>% 
-      hc_exporting(enabled = TRUE, filename = "death_rate20")
+      hc_exporting(enabled = TRUE, filename = "death_rate10")
     
   })
   
@@ -211,7 +211,7 @@ server <- function(input, output){
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
         return Math.round(Math.exp(this.axis.defaultLabelFormatter.call(this)));
     }"))) %>% 
-      hc_exporting(enabled = TRUE, filename = "trend_series20")
+      hc_exporting(enabled = TRUE, filename = "trend_series10")
   })
   
   output$nz_ts <- renderHighchart({

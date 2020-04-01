@@ -17,12 +17,12 @@ df_world_latest$`iso-a3` <- countrycode(df_world_latest$location, origin = 'coun
 df_world_latest$`iso-a2` <- countrycode(df_world_latest$location, origin = 'country.name', destination = 'iso2c')
 
 
-df_world_latest_top20 <- df_world_latest %>% 
+df_world_latest_top10 <- df_world_latest %>% 
   filter(location != "World", location != "International") %>%
   arrange(desc(total_cases)) %>%
-  slice(1:20)
+  slice(1:10)
 
-world_trend <- lapply(c(df_world_latest_top20$location, "New Zealand"), FUN = df_transform_20)
+world_trend <- lapply(c(df_world_latest_top10$location, "New Zealand"), FUN = df_transform_20)
 world_trend <- do.call(rbind, world_trend)
 
 world_info_display <- df_world %>% filter(location == "World", date == max(date))
