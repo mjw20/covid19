@@ -39,7 +39,7 @@ ui <- navbarPage(
            column(6, highchartOutput(outputId = "nz_ethnicty_pie")),
            column(6, highchartOutput(outputId = "nz_age_column")),
            column(6, highchartOutput(outputId = "nz_oversea")),
-           column(6),
+           column(6, highchartOutput(outputId = "nz_gender_age")),
            column(12, highchartOutput(outputId = "nz_travel_routes", height = "500px"))),
   tabPanel("Data",
            h3("Global Data from European Centre for Disease Prevention and Control"),

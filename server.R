@@ -184,7 +184,7 @@ server <- function(input, output){
       mutate(date = as.Date(`Date of report`, "%d/%m/%Y")) %>% 
       arrange(date) %>%
       mutate(total = cumsum(count)) %>% 
-      hchart(type = "line", hcaes(x = date, y = total), dataLabels = list(enabled = TRUE)) %>% 
+      hchart(type = "line", hcaes(x = date, y = total), dataLabels = list(enabled = TRUE), name = "total cases") %>% 
       hc_title(text = "Time Series Total Cases (New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
@@ -199,7 +199,7 @@ server <- function(input, output){
       mutate(total = cumsum(count)) %>% 
       mutate(total_log = log(total)) %>% 
       hchart(type = "line", hcaes(x = date, y = total_log), dataLabels = list(enabled = TRUE, format = "{point.total}"),
-             tooltip = list(pointFormat = "no. of cases: {point.total}")) %>% 
+             tooltip = list(pointFormat = "total cases: {point.total}")) %>% 
       hc_title(text = "Time Series (Logarithm) Total Cases (New Zealand)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "total cases"), labels = list(formatter = JS("function () {
@@ -233,7 +233,7 @@ server <- function(input, output){
   output$nzdhb_column <- renderHighchart({
     df_nzmoh_all %>% group_by(DHB, type) %>% summarise(count = n()) %>% arrange(desc(count)) %>% 
       hchart(type = "column", hcaes(x = DHB, y = count, group = type), dataLabels = list(enabled = TRUE)) %>% 
-      hc_title(text = "Ranking Cases by DHB") %>% 
+      hc_title(text = "Cases by DHB") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
       hc_exporting(enabled = TRUE, filename = "column_dhb_nz")
@@ -269,11 +269,28 @@ server <- function(input, output){
     df_nzmoh_all %>% group_by(`Age group`) %>% summarise(count = n()) %>%
       mutate(`Age group` = factor(`Age group`, levels = c("< 1", "1 to 4", "5 to 9", "10 to 14", "15 to 19", "20 to 29", "30 to 39", "40 to 49", "50 to 59", "60 to 69", "70+", "Unknown"))) %>% 
       arrange(`Age group`, .by_group = TRUE) %>% 
-      hchart(type = "column", hcaes(x = `Age group`, y = count), color = "orange", dataLabels = list(enabled = TRUE)) %>% 
+      hchart(type = "column", hcaes(x = `Age group`, y = count), color = "orange", dataLabels = list(enabled = TRUE), name = "no. of cases") %>% 
       hc_title(text = "Age Group (Total Cases)") %>% 
       hc_xAxis(title = "") %>% 
       hc_yAxis(title = list(text = "no. of cases")) %>% 
       hc_exporting(enabled = TRUE, filename = "column_age_nz")
+  })
+  
+  output$nz_gender_age <- renderHighchart({
+    df_plot <- df_nzmoh_all %>% group_by(Sex, `Age group`) %>% 
+      summarise(count = n()) %>% 
+      mutate(`Age group` = factor(`Age group`, levels = c("< 1", "1 to 4", "5 to 9", "10 to 14", "15 to 19", "20 to 29", "30 to 39", "40 to 49", "50 to 59", "60 to 69", "70+", "Unknown")))
+    
+    df_plot$Sex[which(df_plot$Sex == "")] <- "Unknown"
+    
+    df_plot %>% ungroup() %>% 
+      mutate(Sex = factor(Sex, levels = c("Female", "Male", "Unknown"))) %>% 
+      arrange(Sex, .by_group = TRUE) %>% 
+      hchart(type = "column", hcaes(x = `Age group`, y = count, group = Sex), dataLabels = list(enabled = TRUE)) %>% 
+      hc_title(text = "Age Group by Gender (Total Cases)") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "column_age_gender_nz")
   })
   
   output$nz_oversea <- renderHighchart({
