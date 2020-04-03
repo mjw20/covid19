@@ -79,13 +79,19 @@ global_latest$location[which(is.na(global_latest$location))] <- global_latest$co
 # moh_url <- paste0("https://www.health.govt.nz", nzdf_path)
 moh_url <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details"
 moh_webpage <- read_html(moh_url)
+table_temp <- html_table(moh_webpage)
 df_nzmoh <- html_table(moh_webpage)[[1]]
 # GET(moh_url, write_disk(tf <- tempfile(fileext = ".xlsx")))
 # df_nzmoh <- read_excel(tf, sheet = 1, skip = 3)
 df_nzmoh$DHB <- str_replace_all(df_nzmoh$DHB, "&", "and")
 
 #df_nzmoh_probable <- read_excel(tf, sheet= 2, skip = 3)
-df_nzmoh_probable <- html_table(moh_webpage)[[2]]
+if(length(table_temp) > 3){
+  df_nzmoh_probable <- html_table(moh_webpage)[[3]]
+}else{
+  df_nzmoh_probable <- html_table(moh_webpage)[[2]]
+}
+
 df_nzmoh$type = "confirmed"
 df_nzmoh_probable$type = "probable"
 
@@ -112,9 +118,11 @@ df_nzgender$Sex[which(df_nzgender$Sex == "")] <- "NA"
 
 moh_url2 <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases"
 moh_webpage2 <- read_html(moh_url2)
-
-nz_current <- html_table(moh_webpage2)[[1]]
-nz_ethnicity <- html_table(moh_webpage2)[[3]]
+moh_page_table <- html_table(moh_webpage2)
+nz_current <- moh_page_table[[1]]
+nz_hospital <- moh_page_table[[2]]
+nz_ethnicity <- moh_page_table[[4]]
+nz_test <- moh_page_table[[6]]
 #nz_travel <- html_table((moh_webpage2))[[4]]
 
 # world map data from highcharter

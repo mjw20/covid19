@@ -14,7 +14,7 @@ server <- function(input, output){
           borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
       hc_tooltip(useHTML = TRUE,
                  pointFormat = "{point.location} <br/> Total Cases: {point.total_cases} <br/> Total Deaths: {point.total_deaths}") %>% 
-      hc_colorAxis(minColor = "green", maxColor = "red", max = max(global_latest$total_cases), type = "logarithmic") %>% 
+      hc_colorAxis(minColor = "lightgreen", maxColor = "red", max = max(global_latest$total_cases), type = "logarithmic") %>% 
       hc_title(text = "Covid-19 Global Pandemic") %>% 
       hc_exporting(enabled = TRUE, filename = "global_pandemic_map") %>% 
       hc_mapNavigation(enabled = TRUE)
@@ -172,16 +172,32 @@ server <- function(input, output){
                         borderColor = "#FAFAFA", borderWidth = 0.1) %>% 
       hc_tooltip(useHTML = TRUE,
                  pointFormat = "{point.DHB2015_Na} <br/> Total Cases: {point.total_cases}") %>% 
-      hc_colorAxis(minColor = "green", maxColor = "red", max = max(df$total_cases)) %>% 
+      hc_colorAxis(minColor = "lightgreen", maxColor = "red", max = max(df$total_cases)) %>% 
       hc_title(text = "Covid-19 New Zealand DHB") %>% 
       hc_exporting(enabled = TRUE, filename = "nz_pandemic_map") %>% 
       hc_mapNavigation(enabled = TRUE)
     
   })
   
-  output$nz_current <- DT::renderDataTable({
+  output$nz_current <- renderTable({
     nz_current$`New in last 24 hours` <- as.numeric(nz_current$`New in last 24 hours`)
-    datatable(nz_current, rownames = FALSE, width = 700)
+    nz_current
+  })
+  
+  output$nz_lab <- renderTable({
+    nz_test
+  })
+  
+  output$nz_hospital <- renderHighchart({
+    nz_hospital %>% 
+      hchart(type = "column", hcaes(x = DHB, y = `Total cases`), 
+             dataLabels = list(enabled = TRUE)) %>% 
+      hc_chart(type = "column",
+               options3d = list(enabled = TRUE, beta = 15, alpha = 15)) %>% 
+      hc_title(text = "Hospitalised Cases") %>% 
+      hc_xAxis(title = "") %>% 
+      hc_yAxis(title = list(text = "no. of cases")) %>% 
+      hc_exporting(enabled = TRUE, filename = "column_age_gender_nz")
   })
   
   output$nz_total <- renderHighchart({
