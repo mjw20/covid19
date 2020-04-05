@@ -274,18 +274,18 @@ server <- function(input, output){
       hc_exporting(enabled = TRUE, filename = "gender_pie_nz")
   })
   
-  output$nz_ethnicty_pie <- renderHighchart({
-    highchart() %>% 
-      hc_chart(type = "pie") %>% 
-      hc_add_series_labels_values(labels = nz_ethnicity$Ethnicity, 
-                                  values = nz_ethnicity$`No. of cases`, 
-                                  name = "no. of cases",
-                                  dataLabels = list(enabled = TRUE,
-                                                    format = '{point.name}: {point.percentage:.1f} %')) %>%
-      hc_plotOptions(pie = list(size = 250)) %>% 
-      hc_title(text = "Ethnicity (Total Cases)") %>% 
-      hc_exporting(enabled = TRUE, filename = "ethnicity_pie_nz")
-  })
+  # output$nz_ethnicty_pie <- renderHighchart({
+  #   highchart() %>% 
+  #     hc_chart(type = "pie") %>% 
+  #     hc_add_series_labels_values(labels = nz_ethnicity$Ethnicity, 
+  #                                 values = nz_ethnicity$`No. of cases`, 
+  #                                 name = "no. of cases",
+  #                                 dataLabels = list(enabled = TRUE,
+  #                                                   format = '{point.name}: {point.percentage:.1f} %')) %>%
+  #     hc_plotOptions(pie = list(size = 250)) %>% 
+  #     hc_title(text = "Ethnicity (Total Cases)") %>% 
+  #     hc_exporting(enabled = TRUE, filename = "ethnicity_pie_nz")
+  # })
   
   output$nz_age_column <- renderHighchart({
     df_nzmoh_all %>% group_by(`Age group`) %>% summarise(count = n()) %>%

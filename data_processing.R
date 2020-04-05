@@ -120,9 +120,9 @@ moh_url2 <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-1
 moh_webpage2 <- read_html(moh_url2)
 moh_page_table <- html_table(moh_webpage2)
 nz_current <- moh_page_table[[1]]
-nz_hospital <- moh_page_table[[2]]
-nz_ethnicity <- moh_page_table[[4]]
-nz_test <- moh_page_table[[6]]
+nz_hospital <- moh_page_table[[3]]
+#nz_ethnicity <- moh_page_table[[4]]
+nz_test <- moh_page_table[[5]]
 #nz_travel <- html_table((moh_webpage2))[[4]]
 
 # world map data from highcharter

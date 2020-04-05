@@ -38,7 +38,7 @@ ui <- navbarPage(
            column(12, highchartOutput(outputId = "nz_ts")),
            column(6, highchartOutput(outputId = "nzdhb_column")),
            column(6, highchartOutput(outputId = "nzgender_pie")),
-           column(6, highchartOutput(outputId = "nz_ethnicty_pie")),
+           #column(6, highchartOutput(outputId = "nz_ethnicty_pie")),
            column(6, highchartOutput(outputId = "nz_age_column")),
            column(6, highchartOutput(outputId = "nz_oversea")),
            column(6, highchartOutput(outputId = "nz_gender_age")),
