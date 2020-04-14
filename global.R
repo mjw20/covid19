@@ -19,6 +19,7 @@ library(rsconnect)
 library(rgdal)
 library(jsonlite)
 library(DT)
+library(stringr)
 
 # to deploy the dashboard, one cannot use the pacakges.R to get all the libraries
 # source("packages.R")

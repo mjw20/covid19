@@ -72,25 +72,27 @@ global_latest$location[which(is.na(global_latest$location))] <- global_latest$co
 
 # New Zealand data is from Ministry of Health, public data
 
-# url <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details"
-# html <- paste(readLines(url), collapse="\n")
-# matched <- str_match_all(html, "<a href=\"(.*?)\"") %>% as.data.frame()
-# nzdf_path <- as.character(matched$X2[grep("/system/files/documents/pages/", matched$X2)])
-# moh_url <- paste0("https://www.health.govt.nz", nzdf_path)
-moh_url <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details"
-moh_webpage <- read_html(moh_url)
-table_temp <- html_table(moh_webpage)
-df_nzmoh <- html_table(moh_webpage)[[1]]
-# GET(moh_url, write_disk(tf <- tempfile(fileext = ".xlsx")))
-# df_nzmoh <- read_excel(tf, sheet = 1, skip = 3)
+url <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details"
+html <- paste(readLines(url), collapse="\n")
+matched <- str_match_all(html, "<a href=\"(.*?)\"") %>% as.data.frame()
+nzdf_path <- as.character(matched$X2[grep("/system/files/documents/pages/", matched$X2)])
+moh_url <- paste0("https://www.health.govt.nz", nzdf_path)
+
+# moh_url <- "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details"
+# moh_webpage <- read_html(moh_url)
+# table_temp <- html_table(moh_webpage)
+# df_nzmoh <- html_table(moh_webpage)[[1]]
+
+GET(moh_url, write_disk(tf <- tempfile(fileext = ".xlsx")))
+df_nzmoh <- read_excel(tf, sheet = 1, skip = 3)
 df_nzmoh$DHB <- str_replace_all(df_nzmoh$DHB, "&", "and")
 
-#df_nzmoh_probable <- read_excel(tf, sheet= 2, skip = 3)
-if(length(table_temp) > 3){
-  df_nzmoh_probable <- html_table(moh_webpage)[[3]]
-}else{
-  df_nzmoh_probable <- html_table(moh_webpage)[[2]]
-}
+df_nzmoh_probable <- read_excel(tf, sheet= 2, skip = 3)
+# if(length(table_temp) > 3){
+#   df_nzmoh_probable <- html_table(moh_webpage)[[3]]
+# }else{
+#   df_nzmoh_probable <- html_table(moh_webpage)[[2]]
+# }
 
 df_nzmoh$type = "confirmed"
 df_nzmoh_probable$type = "probable"
